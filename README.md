@@ -6,7 +6,7 @@ sdk: docker
 app_port: 7860
 pinned: true
 license: apache-2.0
-short_description: A governed, self-evolving AI persona that runs fully local on a SLM.
+short_description: Governed self-evolving AI persona, fully local on a SLM.
 tags:
   - build-small-hackathon
   - track:wood
