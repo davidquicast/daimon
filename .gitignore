@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Node
+node_modules/
+
+# Model weights (large; downloaded at runtime, never committed)
+model/weights/
+*.gguf
+
+# Build / dist
+dist/
+build/
+*.egg-info/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.claude/
+
+# Living-loop runtime artifacts (regenerated every turn/session)
+.personaxis/personas/daimon/PERSONA.md
+.personaxis/personas/daimon/memory.md
+.personaxis/personas/daimon/memory/

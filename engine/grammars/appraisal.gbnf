@@ -1,0 +1,34 @@
+# Appraisal grammar (F2) - constrains MiniCPM5-1B's step-2 output to a
+# small, fixed-shape JSON object. Numeric fields are quantized to a short
+# list of literals (not free-form floats) so a 1B model can hit the
+# grammar reliably. See engine/appraise.py for field semantics and
+# engine/mapping.py for how each field maps to a state.json delta.
+#
+# {"sentiment": -0.5, "engagement": 0.75, "correction": false,
+#  "target": "none", "direction": 0, "reason": "user seemed curious"}
+
+# The "(" ... ")" wrapper is required: llama.cpp's GBNF parser only allows a
+# rule body to span multiple lines inside parentheses (newlines elsewhere end
+# the rule), so an unwrapped multi-line sequence here fails with "expecting
+# name" on the second line and silently disables the grammar.
+root ::= (
+  "{" ws
+  "\"sentiment\":" ws sentiment "," ws
+  "\"engagement\":" ws engagement "," ws
+  "\"correction\":" ws boolean "," ws
+  "\"target\":" ws target "," ws
+  "\"direction\":" ws direction "," ws
+  "\"reason\":" ws string ws
+  "}"
+)
+
+ws ::= [ \t\n]*
+
+sentiment ::= "-1.0" | "-0.5" | "0.0" | "0.5" | "1.0"
+engagement ::= "0.0" | "0.25" | "0.5" | "0.75" | "1.0"
+boolean ::= "true" | "false"
+target ::= "\"tone\"" | "\"openness\"" | "\"extraversion\"" | "\"agreeableness\"" | "\"none\""
+direction ::= "-1" | "0" | "1"
+
+string ::= "\"" stringchar* "\""
+stringchar ::= [^"\\\n]

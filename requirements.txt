@@ -1,0 +1,15 @@
+# Daimon - Python dependencies (F0).
+# Versions are loose for now; deploy-engineer pins them exactly for a reproducible build.
+# Chosen over pyproject packaging for Hugging Face Space simplicity.
+
+gradio>=5.0
+fastapi>=0.110        # app/server.py + app/routes.py (F4); gradio depends on it too, pinned explicitly
+uvicorn>=0.29          # serves app/server.py
+huggingface-hub>=0.25
+openai>=1.40          # OpenAI-compatible client for the local llama.cpp endpoint
+httpx>=0.27
+pydantic>=2.7
+pyyaml>=6.0            # parses personaxis.md frontmatter for engine/recompile.py (F2)
+python-dotenv>=1.0     # loads .env for local dev (model/client.py); HF Spaces sets env vars directly
+# llama.cpp itself is not a Python package: the Dockerfile builds the `llama-server`
+# binary from source (CPU-only) and model/serve.sh runs it directly.

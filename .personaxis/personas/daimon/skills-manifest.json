@@ -1,0 +1,9 @@
+{
+  "skills": [
+    {
+      "name": "explain-state",
+      "kind": "local",
+      "status": "materialized"
+    }
+  ]
+}
