@@ -24,7 +24,3 @@ Thumbs.db
 .vscode/
 .claude/
 
-# Living-loop runtime artifacts (regenerated every turn/session)
-.personaxis/personas/daimon/PERSONA.md
-.personaxis/personas/daimon/memory.md
-.personaxis/personas/daimon/memory/
