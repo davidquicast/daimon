@@ -57,7 +57,7 @@ chat -> appraisal (JSON constrained by grammar) -> deterministic mapping
 
 ## Demo
 
-<video src="assets/demo.mp4" controls width="100%"></video>
+<video src="https://media.githubusercontent.com/media/davidquicast/daimon/main/assets/demo.mp4" controls width="100%"></video>
 
 > Posted on X: [x.com/davidquicast/status/2066722575577706745](https://x.com/davidquicast/status/2066722575577706745)
 
