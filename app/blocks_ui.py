@@ -28,6 +28,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 import gradio as gr  # noqa: E402
+from openai import APIConnectionError  # noqa: E402
 
 from engine import governance_demo, recompile  # noqa: E402
 from engine.loop import SLUG, finish_turn, step_stream  # noqa: E402
@@ -401,29 +402,33 @@ def _respond(message: str, history: list[dict]):
 
     thinking_text = ""
     content_text = ""
-    for kind, payload in step_stream(message, prior_history):
-        if kind == "thinking":
-            if thinking_idx is None:
-                history.insert(reply_idx, {"role": "assistant", "content": "", "metadata": {"title": "Thinking...", "status": "pending"}})
-                thinking_idx = reply_idx
-                reply_idx += 1
-            thinking_text += payload
-            history[thinking_idx]["content"] = thinking_text
-        elif kind == "content":
-            content_text += payload
-            history[reply_idx]["content"] = content_text
-        elif kind == "error":
-            content_text += f"(error: {payload})"
-            history[reply_idx]["content"] = content_text
-        elif kind == "done":
-            reply = payload or content_text
-            history[reply_idx]["content"] = reply
-            if thinking_idx is not None:
-                history[thinking_idx]["metadata"]["title"] = "Thinking"
-                history[thinking_idx]["metadata"]["status"] = "done"
-            yield history, gr.update(), gr.update(), message, reply
-            return
-        yield history, gr.update(), gr.update(), "", ""
+    try:
+        for kind, payload in step_stream(message, prior_history):
+            if kind == "thinking":
+                if thinking_idx is None:
+                    history.insert(reply_idx, {"role": "assistant", "content": "", "metadata": {"title": "Thinking...", "status": "pending"}})
+                    thinking_idx = reply_idx
+                    reply_idx += 1
+                thinking_text += payload
+                history[thinking_idx]["content"] = thinking_text
+            elif kind == "content":
+                content_text += payload
+                history[reply_idx]["content"] = content_text
+            elif kind == "error":
+                content_text += f"(error: {payload})"
+                history[reply_idx]["content"] = content_text
+            elif kind == "done":
+                reply = payload or content_text
+                history[reply_idx]["content"] = reply
+                if thinking_idx is not None:
+                    history[thinking_idx]["metadata"]["title"] = "Thinking"
+                    history[thinking_idx]["metadata"]["status"] = "done"
+                yield history, gr.update(), gr.update(), message, reply
+                return
+            yield history, gr.update(), gr.update(), "", ""
+    except APIConnectionError:
+        history[reply_idx]["content"] = "Model server is not available. Try again in a moment."
+        yield history, gr.update(interactive=True), gr.update(interactive=True), "", ""
 
 
 def _post_process(user_message: str, reply: str):
