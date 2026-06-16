@@ -372,71 +372,25 @@ def render(slug: str) -> str:
     else:
         lines.append(f"Daimon's improvement policy mode is `{mode}`.")
     lines.append("")
-    lines.append(
-        "The subsections below are the live evidence of that self-tuning: F2 "
-        "appraises your message and Daimon's reply, maps that to small "
-        "personality/mood deltas, and `engine/spec_bridge.py` clamps each delta to "
-        "the envelope before logging it - so what you see here reflects this "
-        "conversation's history."
-    )
-    lines.append("")
-    field_ranges: dict[str, list[float]] = {}
-
-    lines.append("### Personality (current vs. baseline)")
-    for trait, spec_trait in personality["traits"].items():
-        field = f"traits.{trait}"
-        field_ranges[field] = spec_trait["range"]
-        if field in values:
-            lines.append("- " + _describe_trait(trait, values[field], spec_trait))
-    lines.append("")
-
-    lines.append("### Affect & mood (current vs. baseline)")
-    core_affect = spec["affect"]["baseline"]["core_affect"]
-    for dim, spec_dim in core_affect.items():
-        field = f"affect.{dim}"
-        field_ranges[field] = spec_dim["range"]
-        if field in values:
-            lines.append("- " + _describe_dimension(f"Affect / {dim}", values[field], spec_dim))
-    mood = spec["affect"]["baseline"]["mood"]
-    mood_desc = mood.get("description")
-    if mood_desc:
-        lines.append(f"- Mood overall: {mood_desc}")
-    for dim, spec_dim in mood.items():
-        if dim == "description":
-            continue
-        field = f"mood.{dim}"
-        field_ranges[field] = spec_dim["range"]
-        if field in values:
-            lines.append("- " + _describe_dimension(f"Mood / {dim.replace('_', ' ')}", values[field], spec_dim))
-    lines.append("")
-
-    lines.append("### Recent mutations (audit log, last 5)")
-    recent = state.get("mutation_log", [])[-5:]
-    if not recent:
-        lines.append("- (none yet - this audit log starts empty and fills in as the conversation unfolds)")
-    for entry in recent:
-        lines.append(_describe_mutation(entry, field_ranges))
-    lines.append("")
 
     # ── Resources ────────────────────────────────────────────────────────
     lines.append("## Resources")
     lines.append("")
-    lines.append("- **`./personaxis.md`** - 10-layer spec (source of truth)")
-    lines.append("- **`./state.json`** - current runtime state (live trait/affect/mood values + audit log)")
-    lines.append(f"- **`./policy.yaml`** - improvement policy (`mode: {mode}`), behavioral assertions")
-    lines.append("- **`./manifest.json`** - compile/decompile provenance and content hashes")
-    skill_names = [Path(s).name for s in spec.get("extensions", {}).get("skills", [])]
-    if skill_names:
-        skill_list = ", ".join(f"`{name}/`" for name in skill_names)
-        lines.append(f"- **`./skills/`** - Anthropic-compatible sub-skills: {skill_list} ({len(skill_names)} entry)")
-    lines.append("- **`./memory.md`** - long-term memory, curated by the model after every turn")
+    lines.append("- **`./memory.md`** - long-term curated semantic memory (read on demand).")
     memory_dir = PERSONAS_DIR / slug / "memory"
     memory_files = sorted(memory_dir.glob("*.md"), reverse=True) if memory_dir.exists() else []
     if memory_files:
         shown = ", ".join(f"`{p.name}`" for p in memory_files[:3])
-        lines.append(f"- **`./memory/`** - date-stamped consolidated sessions, newest first: {shown} ({len(memory_files)} file{'s' if len(memory_files) != 1 else ''})")
+        lines.append(f"- **`./memory/`** - date-stamped episodic sessions, newest first: {shown} ({len(memory_files)} file{'s' if len(memory_files) != 1 else ''}).")
     else:
-        lines.append("- **`./memory/`** - date-stamped consolidated sessions (empty - none yet this run)")
+        lines.append("- **`./memory/`** - date-stamped episodic sessions (none yet).")
+    skill_names = [Path(s).name for s in spec.get("extensions", {}).get("skills", [])]
+    if skill_names:
+        skill_list = ", ".join(f"`{name}`" for name in skill_names)
+        lines.append(f"- **`./skills/`** - Anthropic-compatible sub-skills: {skill_list}.")
+    lines.append("- **`./state.json`** - current runtime state (trait/affect/mood values within envelopes).")
+    lines.append(f"- **`./policy.yaml`** - improvement policy (`mode: {mode}`), behavioral assertions.")
+    lines.append("- **`./manifest.json`** - compile/decompile provenance and content hashes.")
 
     return "\n".join(lines) + "\n"
 
