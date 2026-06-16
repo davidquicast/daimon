@@ -14,6 +14,8 @@ export MODEL_PATH="${MODEL_PATH:-model/weights/${MODEL_FILE}}"
 export MODEL_BASE_URL="${MODEL_BASE_URL:-http://localhost:${MODEL_PORT}/v1}"
 export CTX="${CTX:-32768}"
 
+export TEXT_THINKING_MODE="${TEXT_THINKING_MODE:-true}"
+
 export HF_TEXT_MODEL="${HF_TEXT_MODEL:-openbmb/MiniCPM5-1B}"
 export HF_VISION_MODEL="${HF_VISION_MODEL:-openbmb/MiniCPM-V-4.6}"
 export HF_OMNI_MODEL="${HF_OMNI_MODEL:-openbmb/MiniCPM-o-4_5}"
