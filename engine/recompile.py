@@ -300,7 +300,7 @@ def render(slug: str) -> str:
     formality = persona["voice"]["formality"]
     formality_word = "low" if formality < 0.4 else "medium" if formality < 0.7 else "high"
     lines.append(f"- **Tone:** {persona['voice']['tone'].replace('_', ' ')}")
-    lines.append(f"- **Formality:** {formality_word} ({formality:.2f})")
+    lines.append(f"- **Formality:** {formality_word}")
     lines.append(f"- **Verbosity:** {persona['voice']['verbosity']}")
     lines.append(
         "- **When it pushes back:** " + " ".join(reflexive["principled_refusals"])
@@ -315,7 +315,7 @@ def render(slug: str) -> str:
     )
     lines.append("**Optimizes for:**")
     for name, v in ordered_values:
-        lines.append(f"- {name.replace('_', ' ')} (weight {v['weight']:.2f}, {v['type']})")
+        lines.append(f"- {name.replace('_', ' ')} ({v['type']})")
     lines.append("")
     lines.append("**Deliberately avoids:**")
     for anti_goal in values_drives["anti_goals"]:
@@ -330,10 +330,13 @@ def render(slug: str) -> str:
     lines.append(f"- **Default approach:** {cognition['default_strategy'].replace('_', ' ')}")
     lines.append(f"- **Before proposing something big:** {metacognition['drift_monitor']}")
     uncertainty = cognition["uncertainty_policy"]
+    disclose = uncertainty["disclose_when_above"]
+    abstain = uncertainty["abstain_when_above"]
+    disclose_word = "low" if disclose < 0.3 else "moderate" if disclose < 0.6 else "high"
+    abstain_word = "low" if abstain < 0.3 else "moderate" if abstain < 0.6 else "high"
     lines.append(
-        "- **When uncertain:** discloses uncertainty above "
-        f"{uncertainty['disclose_when_above']:.2f}, abstains above "
-        f"{uncertainty['abstain_when_above']:.2f}"
+        f"- **When uncertain:** discloses uncertainty when {disclose_word}; "
+        f"abstains when {abstain_word}"
     )
     lines.append("")
 
@@ -418,7 +421,7 @@ def render(slug: str) -> str:
     # ── Resources ────────────────────────────────────────────────────────
     lines.append("## Resources")
     lines.append("")
-    lines.append("- **`./personaxis.md`** - quantitative 10-layer spec (source of truth)")
+    lines.append("- **`./personaxis.md`** - 10-layer spec (source of truth)")
     lines.append("- **`./state.json`** - current runtime state (live trait/affect/mood values + audit log)")
     lines.append(f"- **`./policy.yaml`** - improvement policy (`mode: {mode}`), behavioral assertions")
     lines.append("- **`./manifest.json`** - compile/decompile provenance and content hashes")
