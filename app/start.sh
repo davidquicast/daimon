@@ -1,12 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export MODEL_FILE="${MODEL_FILE:-MiniCPM5-1B-Q4_K_M.gguf}"
-export MODEL_REPO="${MODEL_REPO:-openbmb/MiniCPM5-1B-GGUF}"
-export MODEL_PATH="${MODEL_PATH:-model/weights/${MODEL_FILE}}"
-export MODEL_PORT="${MODEL_PORT:-8080}"
+export TEXT_MODEL_PROVIDER="${TEXT_MODEL_PROVIDER:-local}"
+export VISION_MODEL_PROVIDER="${VISION_MODEL_PROVIDER:-hf_inference}"
+export OMNI_MODEL_PROVIDER="${OMNI_MODEL_PROVIDER:-hf_inference}"
+export TTS_MODEL_PROVIDER="${TTS_MODEL_PROVIDER:-hf_inference}"
 
-if [ "${TEXT_MODEL_PROVIDER:-local}" = "local" ]; then
+export HARDWARE="${HARDWARE:-auto}"
+export MODEL_REPO="${MODEL_REPO:-openbmb/MiniCPM5-1B-GGUF}"
+export MODEL_FILE="${MODEL_FILE:-MiniCPM5-1B-Q4_K_M.gguf}"
+export MODEL_PORT="${MODEL_PORT:-8080}"
+export MODEL_PATH="${MODEL_PATH:-model/weights/${MODEL_FILE}}"
+export MODEL_BASE_URL="${MODEL_BASE_URL:-http://localhost:${MODEL_PORT}/v1}"
+export CTX="${CTX:-32768}"
+
+export HF_TEXT_MODEL="${HF_TEXT_MODEL:-openbmb/MiniCPM5-1B}"
+export HF_VISION_MODEL="${HF_VISION_MODEL:-openbmb/MiniCPM-V-4.6}"
+export HF_OMNI_MODEL="${HF_OMNI_MODEL:-openbmb/MiniCPM-o-4_5}"
+export HF_TTS_MODEL="${HF_TTS_MODEL:-openbmb/VoxCPM2}"
+
+if [ "${TEXT_MODEL_PROVIDER}" = "local" ]; then
     if [ ! -f "${MODEL_PATH}" ]; then
         echo "Downloading ${MODEL_FILE} from ${MODEL_REPO} ..."
         python model/download_model.py
