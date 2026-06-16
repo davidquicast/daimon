@@ -454,7 +454,7 @@ def _run_governance_demo():
 # ── Layout ───────────────────────────────────────────────────────────────
 
 INTRO = (
-    "Daimon's entire identity is two files: `personaxis.md` (the 10-layer spec - baselines, "
+    "Daimon lives in two files: `personaxis.md` (the 10-layer spec - baselines, "
     "ranges, hard limits) and `state.json` (live values + audit trail). Every message runs "
     "**respond -> appraise -> map -> govern/clamp -> recompile -> remember**. Only Personality "
     "(L3) and Affect & Mood (L5) have declared numeric ranges and move at runtime; the other 8 "
